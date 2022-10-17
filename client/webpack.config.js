@@ -3,9 +3,10 @@ const WebpackPwaManifest = require('webpack-pwa-manifest');
 const path = require('path');
 const { InjectManifest } = require('workbox-webpack-plugin');
 
-// TODO: Add and configure workbox plugins for a service worker and manifest file.
-// TODO: Add CSS loaders and babel to webpack.
+// Class Info - TODO: Add and configure workbox plugins for a service worker and manifest file.
+// Class Info - TODO: Add CSS loaders and babel to webpack.
 
+// Added and configured the workbox plugins needed for JATE
 module.exports = () => {
   return {
     mode: 'development',
@@ -18,12 +19,45 @@ module.exports = () => {
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-      
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'The Webpack Plugin',
+      }),
+      new WebpackPwaManifest({
+        name: 'Just Another Text Editor',
+        short_name: 'JATE',
+        background_color: '#ffffff',
+        description: 'JATE the Homework Module',
+        fingerprints: false,
+        publicPath: '.',
+        icons: [{
+          src: path.resolve('src/images/logo.png'),
+          destination: path.join('assets', 'icons'),
+          sizes: [96, 128, 192, 256, 384, 512]
+        }]
+      }),
+      new InjectManifest({
+        swSrc: './src-sw.js',
+        swDest: 'service-worker.js',
+      }),
     ],
 
+    // Adds the CSS and babel to the workpack
     module: {
       rules: [
-        
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {presets: ['@babel/preset-env'], plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
+          },
+          },
+        },
       ],
     },
   };
