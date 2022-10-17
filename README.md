@@ -1,1 +1,1 @@
-# Text Editor Starter Code
+# Just Another Text Editor - Progressuve Web Applications (PWA)
